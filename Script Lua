@@ -1,236 +1,182 @@
-local runService=game:GetService("RunService")
+local runService = game:GetService("RunService")
 
-local function CreateMenu(name,pos,size,title)
-    local SG=Instance.new("ScreenGui")
-    SG.Name=name
-    SG.Parent=game:GetService("CoreGui")
-    SG.ResetOnSpawn=false
-
-    local MF=Instance.new("Frame")
-    MF.Parent=SG
-    MF.BackgroundColor3=Color3.fromRGB(35,35,35)
-    MF.BorderSizePixel=0
-    MF.Position=pos
-    MF.Size=size
-    MF.Active=true
-    MF.Draggable=true
-
-    local TB=Instance.new("Frame")
-    TB.Parent=MF
-    TB.BackgroundColor3=Color3.fromRGB(0,170,255)
-    TB.BorderSizePixel=0
-    TB.Size=UDim2.new(1,0,0,25)
-
-    local TT=Instance.new("TextLabel")
-    TT.Parent=TB
-    TT.BackgroundTransparency=1
-    TT.Position=UDim2.new(0,8,0,0)
-    TT.Size=UDim2.new(1,-16,1,0)
-    TT.Font=Enum.Font.SourceSansBold
-    TT.Text=title
-    TT.TextColor3=Color3.fromRGB(255,255,255)
-    TT.TextSize=16
-    TT.TextXAlignment=Enum.TextXAlignment.Left
-
-    local SC=Instance.new("ScrollingFrame")
-    SC.Parent=MF
-    SC.BackgroundTransparency=1
-    SC.BorderSizePixel=0
-    SC.Position=UDim2.new(0,5,0,30)
-    SC.Size=UDim2.new(1,-10,1,-35)
-    SC.CanvasSize=UDim2.new(0,0,0,300)
-    SC.ScrollBarThickness=6
-
-    local UIL=Instance.new("UIListLayout")
-    UIL.Parent=SC
-    UIL.Padding=UDim.new(0,3)
-
-    local corner=Instance.new("UICorner",MF)
-    corner.CornerRadius=UDim.new(0,10)
-
-    local stroke=Instance.new("UIStroke",MF)
-    stroke.Thickness=2
-    stroke.Color=Color3.fromRGB(0,170,255)
-
-    local grad=Instance.new("UIGradient",stroke)
-    grad.Color=ColorSequence.new{
-        ColorSequenceKeypoint.new(0,Color3.fromRGB(0,170,255)),
-        ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,0,255)),
-        ColorSequenceKeypoint.new(1,Color3.fromRGB(0,255,170))
-    }
-
-    return SC,MF
+for _, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+    if v:IsA("ScreenGui") and (v.Name:find("Warp") or v.Name:find("ToggleUI")) then
+        v:Destroy()
+    end
 end
 
-local MainScroll,MainFrame=CreateMenu("WarpLeft",UDim2.new(0.5,-190,0.5,-120),UDim2.new(0,180,0,220),"WARP MAIN (LEFT)")
+local player = game.Players.LocalPlayer
+local toggle = Instance.new("ScreenGui")
+toggle.Name = "ToggleUI"
+toggle.Parent = game:GetService("CoreGui")
 
-local Divider=Instance.new("Frame")
-Divider.Parent=MainFrame
-Divider.BackgroundColor3=Color3.fromRGB(0,170,255)
-Divider.BorderSizePixel=0
-Divider.Position=UDim2.new(1,0,0,0)
-Divider.Size=UDim2.new(0,4,1,0)
+local openBtn = Instance.new("TextButton")
+openBtn.Parent = toggle
+openBtn.Size = UDim2.new(0, 60, 0, 60)
+openBtn.Position = UDim2.new(0, 20, 0.5, -30)
+openBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+openBtn.Text = "✅"
+openBtn.TextColor3 = Color3.new(1, 1, 1)
+openBtn.Font = Enum.Font.SourceSansBold
+openBtn.TextSize = 30
+openBtn.Visible = true
+openBtn.Active = true
+openBtn.Draggable = true
+Instance.new("UICorner", openBtn).CornerRadius = UDim.new(1, 0)
 
-local SubFrame=Instance.new("Frame")
-SubFrame.Parent=MainFrame
-SubFrame.BackgroundColor3=Color3.fromRGB(35,35,35)
-SubFrame.BorderSizePixel=0
-SubFrame.Position=UDim2.new(1,4,0,0)
-SubFrame.Size=UDim2.new(0,140,0,120)
+local function CreateMenu(name, pos, size, title)
+    local SG = Instance.new("ScreenGui")
+    SG.Name = name
+    SG.Parent = game:GetService("CoreGui")
+    SG.Enabled = false
 
-local subCorner=Instance.new("UICorner",SubFrame)
-subCorner.CornerRadius=UDim.new(0,10)
+    local MF = Instance.new("Frame")
+    MF.Parent = SG
+    MF.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    MF.BorderSizePixel = 0
+    MF.Position = pos
+    MF.Size = size
+    MF.Active = true
+    MF.Draggable = true
 
-local subStroke=Instance.new("UIStroke",SubFrame)
-subStroke.Color=Color3.fromRGB(255,0,255)
+    Instance.new("UICorner", MF).CornerRadius = UDim.new(0, 12)
+    local stroke = Instance.new("UIStroke", MF)
+    stroke.Thickness = 2
+    stroke.Color = Color3.fromRGB(0, 255, 200)
 
-local SubTitle=Instance.new("Frame")
-SubTitle.Parent=SubFrame
-SubTitle.BackgroundColor3=Color3.fromRGB(0,170,255)
-SubTitle.BorderSizePixel=0
-SubTitle.Size=UDim2.new(1,0,0,25)
+    local TB = Instance.new("Frame")
+    TB.Parent = MF
+    TB.BorderSizePixel = 0
+    TB.Size = UDim2.new(1, 0, 0, 28)
+    TB.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 
-local SubText=Instance.new("TextLabel")
-SubText.Parent=SubTitle
-SubText.BackgroundTransparency=1
-SubText.Size=UDim2.new(1,0,1,0)
-SubText.Font=Enum.Font.SourceSansBold
-SubText.Text="WARP 6"
-SubText.TextColor3=Color3.fromRGB(255,255,255)
-SubText.TextSize=16
+    local TT = Instance.new("TextLabel")
+    TT.Parent = TB
+    TT.BackgroundTransparency = 1
+    TT.Position = UDim2.new(0, 10, 0, 0)
+    TT.Size = UDim2.new(1, -40, 1, 0)
+    TT.Font = Enum.Font.SourceSansBold
+    TT.Text = title
+    TT.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TT.TextSize = 16
+    TT.TextXAlignment = Enum.TextXAlignment.Left
 
-local SubScroll=Instance.new("ScrollingFrame")
-SubScroll.Parent=SubFrame
-SubScroll.BackgroundTransparency=1
-SubScroll.BorderSizePixel=0
-SubScroll.Position=UDim2.new(0,5,0,30)
-SubScroll.Size=UDim2.new(1,-10,1,-35)
-SubScroll.CanvasSize=UDim2.new(0,0,0,200)
-SubScroll.ScrollBarThickness=6
+    local SC = Instance.new("ScrollingFrame")
+    SC.Parent = MF
+    SC.BackgroundTransparency = 1
+    SC.BorderSizePixel = 0
+    SC.Position = UDim2.new(0, 6, 0, 32)
+    SC.Size = UDim2.new(1, -12, 1, -38)
+    SC.CanvasSize = UDim2.new(0, 0, 0, 450)
+    SC.ScrollBarThickness = 5
+    Instance.new("UIListLayout", SC).Padding = UDim.new(0, 4)
 
-local UIL2=Instance.new("UIListLayout")
-UIL2.Parent=SubScroll
-UIL2.Padding=UDim.new(0,3)
+    return SC, MF, SG
+end
 
-local RightScroll,_=CreateMenu("WarpRight",UDim2.new(0.5,50,0.5,-120),UDim2.new(0,180,0,170),"LOOP CONTROL (RIGHT)")
+local MainScroll, MainFrame, MainSG = CreateMenu("WarpLeft", UDim2.new(0.5, -190, 0.5, -120), UDim2.new(0, 180, 0, 220), "WARP MAIN")
+local RightScroll, RightFrame, RightSG = CreateMenu("WarpRight", UDim2.new(0.5, 50, 0.5, -120), UDim2.new(0, 180, 0, 210), "LOOP CONTROL")
 
-local isLocked=false
-local P1_COORD=Vector3.new(21.34,-18.50,-65.56)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Parent = MainFrame
+CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+CloseBtn.Position = UDim2.new(1, -28, 0, 1)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+CloseBtn.Text = "❌"
+CloseBtn.TextColor3 = Color3.new(1, 1, 1)
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.TextSize = 18
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
-local function Btn(parent,text,coord)
-    local b=Instance.new("TextButton")
-    b.Parent=parent
-    b.BackgroundColor3=Color3.fromRGB(50,50,50)
-    b.BorderSizePixel=0
-    b.Size=UDim2.new(1,-5,0,35)
-    b.Font=Enum.Font.SourceSans
-    b.Text=text
-    b.TextColor3=Color3.fromRGB(255,255,255)
+local function SetVisible(val)
+    MainSG.Enabled = val
+    RightSG.Enabled = val
+    openBtn.Visible = not val
+end
 
-    local stroke=Instance.new("UIStroke",b)
-    stroke.Color=Color3.fromRGB(0,170,255)
+openBtn.MouseButton1Click:Connect(function() SetVisible(true) end)
+CloseBtn.MouseButton1Click:Connect(function() SetVisible(false) end)
 
-    b.MouseEnter:Connect(function()
-        b.BackgroundColor3=Color3.fromRGB(0,170,255)
-    end)
-    b.MouseLeave:Connect(function()
-        b.BackgroundColor3=Color3.fromRGB(50,50,50)
-    end)
+local isLocked = false
+local P1_COORD = Vector3.new(21.34, -18.50, -65.56)
 
+local function Btn(parent, text, coord)
+    local b = Instance.new("TextButton")
+    b.Parent = parent
+    b.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
+    b.Size = UDim2.new(1, -5, 0, 35)
+    b.Font = Enum.Font.SourceSansBold
+    b.Text = text
+    b.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", b).Color = Color3.fromRGB(0, 255, 200)
     b.MouseButton1Click:Connect(function()
         if isLocked then return end
-        local hrp=game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then hrp.CFrame=CFrame.new(coord) end
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then hrp.CFrame = CFrame.new(coord) end
     end)
 end
 
-Btn(MainScroll,"Warp Point 1",P1_COORD)
-Btn(MainScroll,"Warp Point 2",Vector3.new(24.01,-16.50,-76.16))
-Btn(MainScroll,"Warp Point 3",Vector3.new(30.49,-18.50,-47.22))
-Btn(MainScroll,"Warp Point 5",Vector3.new(-55.27,-18.50,-66.38))
+Btn(MainScroll, "Warp Point 1", P1_COORD)
+Btn(MainScroll, "Warp Point 2", Vector3.new(24.01, -16.50, -76.16))
+Btn(MainScroll, "Warp Point 3", Vector3.new(30.49, -18.50, -47.22))
+Btn(MainScroll, "Warp Point 5", Vector3.new(-55.27, -18.50, -66.38))
 
-local LockBtn=Instance.new("TextButton")
-LockBtn.Parent=MainScroll
-LockBtn.BackgroundColor3=Color3.fromRGB(50,50,50)
-LockBtn.BorderSizePixel=0
-LockBtn.Size=UDim2.new(1,-5,0,35)
-LockBtn.Font=Enum.Font.SourceSansBold
-LockBtn.Text="FREEZE PLAYER: OFF"
-LockBtn.TextColor3=Color3.fromRGB(255,255,255)
-
-local lockStroke=Instance.new("UIStroke",LockBtn)
-lockStroke.Color=Color3.fromRGB(255,0,100)
+local LockBtn = Instance.new("TextButton")
+LockBtn.Parent = MainScroll
+LockBtn.Size = UDim2.new(1, -5, 0, 35)
+LockBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
+LockBtn.Text = "FREEZE PLAYER: OFF"
+LockBtn.TextColor3 = Color3.new(1, 1, 1)
+LockBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", LockBtn).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", LockBtn).Color = Color3.fromRGB(255, 0, 100)
 
 LockBtn.MouseButton1Click:Connect(function()
-    local hrp=game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
     if hrp then
-        isLocked=not isLocked
-        hrp.Anchored=isLocked
-        LockBtn.BackgroundColor3=isLocked and Color3.fromRGB(255,0,0) or Color3.fromRGB(50,50,50)
-        LockBtn.Text=isLocked and "FREEZE PLAYER: ON" or "FREEZE PLAYER: OFF"
+        isLocked = not isLocked
+        hrp.Anchored = isLocked
+        LockBtn.Text = isLocked and "FREEZE PLAYER: ON" or "FREEZE PLAYER: OFF"
+        LockBtn.BackgroundColor3 = isLocked and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(35, 35, 55)
     end
 end)
 
-Btn(SubScroll,"Warp Point 6",Vector3.new(11.51,-18.50,-66.30))
+local cam = workspace.CurrentCamera
+local CAM_POS = Vector3.new(-11.38, 35.72, -144.16)
+local LOOK_TARGET = Vector3.new(-7.0, -18.5, -65.5)
+local isLoop6, isLoop7 = false, false
 
-local freeze=false
-local freezeBtn=Instance.new("TextButton")
-freezeBtn.Parent=SubScroll
-freezeBtn.BackgroundColor3=Color3.fromRGB(50,50,50)
-freezeBtn.BorderSizePixel=0
-freezeBtn.Size=UDim2.new(1,-5,0,35)
-freezeBtn.Font=Enum.Font.SourceSansBold
-freezeBtn.Text="🔄🔄🔄"
-freezeBtn.TextColor3=Color3.fromRGB(255,255,255)
-
-local freezeStroke=Instance.new("UIStroke",freezeBtn)
-freezeStroke.Color=Color3.fromRGB(0,255,170)
-
-freezeBtn.MouseButton1Click:Connect(function()
-    freeze=not freeze
-    local char=game.Players.LocalPlayer.Character
-    local hrp=char and char:FindFirstChild("HumanoidRootPart")
-    if freeze and hrp then
-        freezeBtn.BackgroundColor3=Color3.fromRGB(0,255,0)
-        hrp.CFrame=CFrame.new(64.71,18.50,-110.64)
-        hrp.Anchored=true
-    elseif hrp then
-        freezeBtn.BackgroundColor3=Color3.fromRGB(50,50,50)
-        hrp.Anchored=false
-        hrp.CFrame=CFrame.new(P1_COORD)
-    end
-end)
-
-local cam=workspace.CurrentCamera
-local CAM_POS=Vector3.new(-11.38,35.72,-144.16)
-local LOOK_TARGET=Vector3.new(-7.0,-18.5,-65.5)
-local isLoop6,isLoop7=false,false
-
-local btn6=Instance.new("TextButton")
-btn6.Parent=RightScroll
-btn6.BackgroundColor3=Color3.fromRGB(50,50,50)
-btn6.BorderSizePixel=0
-btn6.Size=UDim2.new(1,-5,0,40)
-btn6.Font=Enum.Font.SourceSansBold
-btn6.Text="⚠️⚠️⚠️ (6: Slide Edge)"
-btn6.TextColor3=Color3.fromRGB(255,255,255)
-
-Instance.new("UIStroke",btn6).Color=Color3.fromRGB(255,0,0)
+local btn6 = Instance.new("TextButton")
+btn6.Parent = RightScroll
+btn6.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
+btn6.Size = UDim2.new(1, -5, 0, 40)
+btn6.Text = "⚠️⚠️⚠️ (6: Slide Edge)"
+btn6.TextColor3 = Color3.new(1, 1, 1)
+btn6.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btn6).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", btn6).Color = Color3.fromRGB(255, 0, 0)
 
 btn6.MouseButton1Click:Connect(function()
-    isLoop6=not isLoop6
-    btn6.BackgroundColor3=isLoop6 and Color3.fromRGB(255,0,0) or Color3.fromRGB(50,50,50)
-    if isLoop6 then cam.CameraType=Enum.CameraType.Scriptable cam.CFrame=CFrame.lookAt(CAM_POS,LOOK_TARGET) else cam.CameraType=Enum.CameraType.Custom end
+    isLoop6 = not isLoop6
+    btn6.BackgroundColor3 = isLoop6 and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(35, 35, 55)
+    if isLoop6 then
+        cam.CameraType = Enum.CameraType.Scriptable
+        cam.CFrame = CFrame.lookAt(CAM_POS, LOOK_TARGET)
+    else
+        cam.CameraType = Enum.CameraType.Custom
+    end
     task.spawn(function()
-        local p={Vector3.new(-55.22,-18.5,-51.8),Vector3.new(-55.2,-18.5,-80),Vector3.new(41.1,-18.5,-79.6),Vector3.new(41.4,-18.5,-51.8),Vector3.new(-55.22,-18.5,-51.8)}
+        local p = {Vector3.new(-55.22, -18.5, -51.8), Vector3.new(-55.2, -18.5, -80), Vector3.new(41.1, -18.5, -79.6), Vector3.new(41.4, -18.5, -51.8), Vector3.new(-55.22, -18.5, -51.8)}
         while isLoop6 do
-            local hrp=game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
             if hrp then
-                for i=1,#p-1 do
-                    for s=0,1 do
+                for i = 1, #p - 1 do
+                    for s = 0, 1, 0.05 do
                         if not isLoop6 then break end
-                        hrp.Velocity=Vector3.new(0,0,0)
-                        hrp.CFrame=CFrame.new(p[i]:Lerp(p[i+1],s))
+                        hrp.Velocity = Vector3.new(0, 0, 0)
+                        hrp.CFrame = CFrame.new(p[i]:Lerp(p[i + 1], s))
                         runService.Heartbeat:Wait()
                     end
                 end
@@ -239,40 +185,42 @@ btn6.MouseButton1Click:Connect(function()
     end)
 end)
 
-local btn7=Instance.new("TextButton")
-btn7.Parent=RightScroll
-btn7.BackgroundColor3=Color3.fromRGB(50,50,50)
-btn7.BorderSizePixel=0
-btn7.Size=UDim2.new(1,-5,0,40)
-btn7.Font=Enum.Font.SourceSansBold
-btn7.Text="⚠️⚠️⚠️ (7: Area Fill)"
-btn7.TextColor3=Color3.fromRGB(255,255,255)
-
-Instance.new("UIStroke",btn7).Color=Color3.fromRGB(255,100,0)
+local btn7 = Instance.new("TextButton")
+btn7.Parent = RightScroll
+btn7.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
+btn7.Size = UDim2.new(1, -5, 0, 40)
+btn7.Text = "⚠️⚠️⚠️ (7: Area Fill)"
+btn7.TextColor3 = Color3.new(1, 1, 1)
+btn7.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", btn7).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", btn7).Color = Color3.fromRGB(255, 100, 0)
 
 btn7.MouseButton1Click:Connect(function()
-    isLoop7=not isLoop7
-    btn7.BackgroundColor3=isLoop7 and Color3.fromRGB(255,0,0) or Color3.fromRGB(50,50,50)
-    if isLoop7 then 
-        cam.CameraType=Enum.CameraType.Scriptable 
-        cam.CFrame=CFrame.lookAt(CAM_POS,LOOK_TARGET) 
-    else 
-        cam.CameraType=Enum.CameraType.Custom
-        local hrp=game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then hrp.CFrame=CFrame.new(P1_COORD) end
+    isLoop7 = not isLoop7
+    btn7.BackgroundColor3 = isLoop7 and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(35, 35, 55)
+    if isLoop7 then
+        cam.CameraType = Enum.CameraType.Scriptable
+        cam.CFrame = CFrame.lookAt(CAM_POS, LOOK_TARGET)
+    else
+        cam.CameraType = Enum.CameraType.Custom
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then 
+            hrp.Anchored = false
+            hrp.CFrame = CFrame.new(P1_COORD) 
+        end
     end
     task.spawn(function()
         while isLoop7 do
-            local char=game.Players.LocalPlayer.Character
-            local hrp=char and char:FindFirstChild("HumanoidRootPart")
-            local hum=char and char:FindFirstChild("Humanoid")
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChild("Humanoid")
             if hrp and hum then
-                hum.Health=hum.MaxHealth
-                for z=-80,-51,8 do
-                    for x=-55,41,10 do
+                hum.Health = hum.MaxHealth
+                for z = -80, -51, 8 do
+                    for x = -55, 41, 10 do
                         if not isLoop7 then break end
-                        hrp.Velocity=Vector3.new(0,0,0)
-                        hrp.CFrame=CFrame.new(x,-18.5,z)
+                        hrp.Velocity = Vector3.new(0, 0, 0)
+                        hrp.CFrame = CFrame.new(x, -18.5, z)
                         runService.Heartbeat:Wait()
                     end
                 end
@@ -280,3 +228,31 @@ btn7.MouseButton1Click:Connect(function()
         end
     end)
 end)
+
+local freeze = false
+local freezeBtn = Instance.new("TextButton")
+freezeBtn.Parent = RightScroll
+freezeBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
+freezeBtn.Size = UDim2.new(1, -5, 0, 35)
+freezeBtn.Font = Enum.Font.SourceSansBold
+freezeBtn.Text = "🔄🔄🔄"
+freezeBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", freezeBtn).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", freezeBtn).Color = Color3.fromRGB(0, 255, 200)
+
+freezeBtn.MouseButton1Click:Connect(function()
+    freeze = not freeze
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        if freeze then
+            freezeBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+            hrp.CFrame = CFrame.new(64.71, 18.50, -110.64)
+            hrp.Anchored = true
+        else
+            freezeBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 55)
+            hrp.Anchored = false
+            hrp.CFrame = CFrame.new(P1_COORD)
+        end
+    end
+end)
+
